@@ -5,6 +5,7 @@ const blogSchema = new mongoose.Schema({
   title: String,
   content: String,
   category: { type: String, required: true },
+  image: String,
   slug: { type: String, unique: true },
 });
 
