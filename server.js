@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
 import subscribeRoutes from "./routes/subscribeRoutes.js";
+import blogRoutes from "./routes/blogRoutes.js";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ mongoose
 
 // API Routes
 app.use("/api/subscribe", subscribeRoutes);
+app.use("/api", blogRoutes);
 
 // Sunucu başlatma
 const PORT = process.env.PORT || 5000;
