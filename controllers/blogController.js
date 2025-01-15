@@ -74,4 +74,22 @@ const deleteBlog = async (req, res) => {
   }
 };
 
-export { getBlogsByCategory, createBlog, updateBlog, deleteBlog };
+// Blog detayını getir
+const getBlogById = async (req, res) => {
+  const { slug } = req.params;
+
+  try {
+    // Blogu slug'a göre bul
+    const blog = await Blog.findOne({ slug });
+
+    if (!blog) {
+      return res.status(404).json({ message: "Blog bulunamadı" });
+    }
+
+    res.json(blog);
+  } catch (error) {
+    res.status(500).json({ message: "Sunucu hatası", error });
+  }
+};
+
+export { getBlogsByCategory, createBlog, updateBlog, deleteBlog, getBlogById };

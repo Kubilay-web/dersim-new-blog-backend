@@ -4,6 +4,7 @@ import {
   createBlog,
   updateBlog,
   deleteBlog,
+  getBlogById,
 } from "../controllers/blogController.js";
 
 const router = express.Router();
@@ -19,5 +20,8 @@ router.put("/blogs/:id", updateBlog);
 
 // Blog silme
 router.delete("/blogs/:id", deleteBlog);
+
+// Blog detayını getir
+router.get("/blogs/:slug", getBlogById);
 
 export default router;
