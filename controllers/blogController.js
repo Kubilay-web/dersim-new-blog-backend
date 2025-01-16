@@ -87,25 +87,39 @@ const updateBlog = async (req, res) => {
 };
 
 // Blogu sil
+
 const deleteBlog = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // Blog ID'sini al
 
   try {
+    // Blogu ID'ye göre bul
     const blog = await Blog.findById(id);
 
+    // Eğer blog bulunamazsa hata mesajı döndür
     if (!blog) {
       return res.status(404).json({ message: "Blog bulunamadı" });
     }
 
-    // Cloudinary'deki resmi sil
+    // Eğer blogda bir resim varsa Cloudinary'den sil
     if (blog.image) {
-      const publicId = blog.image.split("/").pop().split(".")[0];
-      await cloudinary.uploader.destroy(publicId);
+      try {
+        const publicId = blog.image.split("/").pop().split(".")[0]; // Public ID'yi al
+        await cloudinary.uploader.destroy(publicId); // Resmi sil
+      } catch (cloudinaryError) {
+        console.error("Cloudinary resmi silerken hata:", cloudinaryError);
+        return res
+          .status(500)
+          .json({ message: "Resim silinirken hata oluştu", cloudinaryError });
+      }
     }
 
-    await blog.remove();
+    // Blogu veritabanından sil
+    await Blog.deleteOne({ _id: id });
+
+    // Başarı mesajı gönder
     res.json({ message: "Blog başarıyla silindi" });
   } catch (error) {
+    console.error("Blog silinirken hata:", error);
     res.status(500).json({ message: "Blog silinirken hata oluştu", error });
   }
 };
