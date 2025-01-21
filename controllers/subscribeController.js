@@ -37,4 +37,17 @@ const subscribeController = async (req, res) => {
   }
 };
 
-export default subscribeController;
+const getSubscriptions = async (req, res) => {
+  try {
+    // Fetch all subscriptions from the database
+    const subscriptions = await Subscription.find();
+
+    // Return the list of subscriptions
+    res.status(200).json(subscriptions);
+  } catch (error) {
+    console.error("Abonelikleri listeleme hatası: ", error);
+    res.status(500).json({ message: "Bir hata oluştu." });
+  }
+};
+
+export { subscribeController, getSubscriptions };

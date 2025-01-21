@@ -5,7 +5,7 @@ import cloudinary from "./cloudinary.js";
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: "blogs", // Resimlerin yükleneceği klasör
+    folder: "blogs",
     allowed_formats: ["jpg", "jpeg", "png"],
   },
 });
