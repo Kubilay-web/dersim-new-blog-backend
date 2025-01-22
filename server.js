@@ -9,6 +9,7 @@ import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import postRoutes from "./routes/post.route.js";
 import puppeteer from "puppeteer";
 
 dotenv.config();
@@ -79,6 +80,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/post", postRoutes);
 
 const pageSchema = new mongoose.Schema({
   path: String,
