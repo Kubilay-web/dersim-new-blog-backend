@@ -3,15 +3,15 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
-import subscribeRoutes from "../routes/subscribeRoutes.js";
-import blogRoutes from "../routes/blogRoutes.js";
-import userRoutes from "../routes/user.route.js";
-import authRoutes from "../routes/auth.route.js";
-import paymentRoutes from "../routes/paymentRoutes.js";
-import productRoutes from "../routes/productRoutes.js";
-import postRoutes from "../routes/post.route.js";
+import subscribeRoutes from "./routes/subscribeRoutes.js";
+import blogRoutes from "./routes/blogRoutes.js";
+import userRoutes from "./routes/user.route.js";
+import authRoutes from "./routes/auth.route.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
+import postRoutes from "./routes/post.route.js";
 import puppeteer from "puppeteer";
-import homePageRoute from "../routes/homePageRoute.js";
+import homePageRoute from "./routes/homePageRoute.js";
 
 dotenv.config();
 
