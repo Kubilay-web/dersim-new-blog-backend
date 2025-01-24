@@ -27,7 +27,19 @@ const postSchema = new mongoose.Schema(
     },
     color: {
       type: String,
-      default: "#bfc900", // Varsayılan renk
+      default: "#fff", // Varsayılan renk
+    },
+    event: {
+      type: String,
+      required: false, // You can make this required if needed
+    },
+    date: {
+      type: Date,
+      required: false, // You can make this required if needed
+    },
+    price: {
+      type: Number,
+      required: false, // You can make this required if needed
     },
   },
   { timestamps: true }
