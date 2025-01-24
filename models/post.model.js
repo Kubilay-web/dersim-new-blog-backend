@@ -25,6 +25,10 @@ const postSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    color: {
+      type: String,
+      default: "#bfc900", // Varsayılan renk
+    },
   },
   { timestamps: true }
 );

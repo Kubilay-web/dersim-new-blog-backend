@@ -7,7 +7,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "posts", // Resimlerin yükleneceği klasör
-    allowed_formats: ["jpg", "jpeg", "png"], // İzin verilen formatlar
+    allowed_formats: ["jpg", "jpeg", "png", "webp"], // İzin verilen formatlar
   },
 });
 

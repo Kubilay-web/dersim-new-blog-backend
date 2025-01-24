@@ -88,6 +88,7 @@ export const updatepost = async (req, res, next) => {
     }
 
     let updatedImage = post.image;
+    let updatedColor = req.body.color || post.color; // Eğer yeni bir renk yoksa, eski renk kullanılacak
 
     // Yeni resim varsa, eskiyi sil ve yeni resmi yükle
     if (req.file) {
@@ -108,6 +109,7 @@ export const updatepost = async (req, res, next) => {
           content: req.body.content,
           category: req.body.category,
           image: updatedImage,
+          color: updatedColor, // Renk güncelleniyor
           blogContent: req.body.blogContent,
         },
       },
