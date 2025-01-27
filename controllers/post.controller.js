@@ -43,6 +43,7 @@ export const create = async (req, res, next) => {
 };
 
 // Postları almak
+
 export const getposts = async (req, res, next) => {
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
@@ -66,8 +67,20 @@ export const getposts = async (req, res, next) => {
 
     const totalPosts = await Post.countDocuments();
 
+    // Format the date for each post before sending the response
+    const formattedPosts = posts.map((post) => {
+      // Check if date exists before applying formatting
+      const formattedDate = post.date
+        ? new Date(post.date).toLocaleDateString("tr-TR") // Adjust 'tr-TR' to your desired locale
+        : null;
+      return {
+        ...post.toObject(),
+        date: formattedDate, // Add the formatted date to the post object
+      };
+    });
+
     res.status(200).json({
-      posts,
+      posts: formattedPosts,
       totalPosts,
     });
   } catch (error) {
