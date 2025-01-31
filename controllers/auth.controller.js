@@ -59,12 +59,14 @@ export const signin = async (req, res, next) => {
     const { password: pass, ...rest } = validUser._doc;
 
     // Set the JWT token in a cookie and send the response
+
     res
       .status(200)
       .cookie("access_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Set secure for production (https)
-        maxAge: 3600 * 1000, // Example: 1 hour expiration
+        httpOnly: true, // Çereze JavaScript erişimi yok
+        secure: process.env.NODE_ENV === "production", // Sadece HTTPS üzerinden çerez gönder
+        sameSite: "Strict", // Çerezi sadece aynı siteden gönder
+        maxAge: 3600 * 1000, // 1 saat boyunca geçerli
       })
       .json(rest);
   } catch (error) {
