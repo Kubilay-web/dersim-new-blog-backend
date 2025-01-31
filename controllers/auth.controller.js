@@ -57,7 +57,7 @@ export const signin = async (req, res, next) => {
     const token = jwt.sign(
       { id: validUser._id, isAdmin: validUser.isAdmin },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" } // Token süresi 1 gün
+      { expiresIn: "1d" }
     );
 
     // Kullanıcı şifresini hariç tutarak geri gönder
@@ -65,8 +65,8 @@ export const signin = async (req, res, next) => {
 
     res
       .status(200)
-      .cookie("access_token", token, { httpOnly: true }) // JWT token'ı cookie olarak ayarla
-      .json(rest); // Kullanıcı bilgilerini döndür
+      .cookie("access_token", token, { httpOnly: true })
+      .json(rest);
   } catch (error) {
     next(error); // Hata durumunda error handler'a yönlendir
   }
