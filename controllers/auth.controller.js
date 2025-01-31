@@ -4,71 +4,52 @@ import jwt from "jsonwebtoken";
 import { errorHandler } from "../utils/error.js";
 
 export const signup = async (req, res, next) => {
-  const { username, email, password } = req.body;
-
-  if (
-    !username ||
-    !email ||
-    !password ||
-    username === "" ||
-    email === "" ||
-    password === ""
-  ) {
-    next(errorHandler(400, "All fields are required"));
-  }
-
-  const hashedPassword = bcryptjs.hashSync(password, 10);
-
-  const newUser = new User({
-    username,
-    email,
-    password: hashedPassword,
-  });
-
   try {
+    const { username, email, password } = req.body;
+    if (!username || !email || !password) {
+      return next(errorHandler(400, "All fields are required"));
+    }
+
+    const hashedPassword = bcryptjs.hashSync(password, 10);
+    const newUser = new User({ username, email, password: hashedPassword });
+
     await newUser.save();
-    res.json("Signup successful");
+    res.status(201).json("Signup successful");
   } catch (error) {
     next(error);
   }
 };
 
 export const signin = async (req, res, next) => {
-  const { email, password } = req.body;
-
-  if (!email || !password || email === "" || password === "") {
-    return next(errorHandler(400, "All fields are required"));
-  }
-
   try {
-    const validUser = await User.findOne({ email });
-    if (!validUser) {
-      return next(errorHandler(404, "User not found"));
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return next(errorHandler(400, "All fields are required"));
     }
-    const validPassword = bcryptjs.compareSync(password, validUser.password);
-    if (!validPassword) {
-      return next(errorHandler(400, "Invalid password"));
-    }
+
+    const user = await User.findOne({ email });
+    if (!user) return next(errorHandler(404, "User not found"));
+
+    const isPasswordValid = bcryptjs.compareSync(password, user.password);
+    if (!isPasswordValid) return next(errorHandler(400, "Invalid password"));
+
     const token = jwt.sign(
-      { id: validUser._id, isAdmin: validUser.isAdmin },
-      process.env.JWT_SECRET
+      { id: user._id, isAdmin: user.isAdmin },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
     );
 
-    console.log(token);
-
-    const { password: pass, ...rest } = validUser._doc;
-
-    // Set the JWT token in a cookie and send the response
+    const { password: _, ...userData } = user._doc;
 
     res
       .status(200)
       .cookie("access_token", token, {
-        httpOnly: true, // Çereze JavaScript erişimi yok
-        secure: process.env.NODE_ENV === "production", // Sadece HTTPS üzerinden çerez gönder
-        sameSite: "Strict", // Çerezi sadece aynı siteden gönder
-        maxAge: 3600 * 1000, // 1 saat boyunca geçerli
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Strict",
+        maxAge: 3600000, // 1 saat
       })
-      .json(rest);
+      .json(userData);
   } catch (error) {
     next(error);
   }
