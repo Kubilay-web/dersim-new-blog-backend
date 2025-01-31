@@ -37,7 +37,7 @@ export const signin = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password || email === "" || password === "") {
-    next(errorHandler(400, "All fields are required"));
+    return next(errorHandler(400, "All fields are required"));
   }
 
   try {
@@ -58,10 +58,13 @@ export const signin = async (req, res, next) => {
 
     const { password: pass, ...rest } = validUser._doc;
 
+    // Set the JWT token in a cookie and send the response
     res
       .status(200)
       .cookie("access_token", token, {
         httpOnly: true,
+        secure: process.env.NODE_ENV === "production", // Set secure for production (https)
+        maxAge: 3600 * 1000, // Example: 1 hour expiration
       })
       .json(rest);
   } catch (error) {

@@ -12,6 +12,7 @@ import productRoutes from "../routes/productRoutes.js";
 import postRoutes from "../routes/post.route.js";
 import puppeteer from "puppeteer";
 import homePageRoute from "../routes/homePageRoute.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use(
 );
 
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 // MongoDB bağlantısı
 mongoose
