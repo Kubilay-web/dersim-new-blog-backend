@@ -37,38 +37,35 @@ export const signin = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password || email === "" || password === "") {
-    return next(errorHandler(400, "Tüm alanlar gerekli"));
+    next(errorHandler(400, "All fields are required"));
   }
 
   try {
-    // E-posta ile kullanıcıyı bul
     const validUser = await User.findOne({ email });
     if (!validUser) {
-      return next(errorHandler(404, "Kullanıcı bulunamadı"));
+      return next(errorHandler(404, "User not found"));
     }
-
-    // Şifreyi karşılaştır
     const validPassword = bcryptjs.compareSync(password, validUser.password);
     if (!validPassword) {
-      return next(errorHandler(400, "Geçersiz şifre"));
+      return next(errorHandler(400, "Invalid password"));
     }
-
-    // JWT token oluştur
     const token = jwt.sign(
       { id: validUser._id, isAdmin: validUser.isAdmin },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      process.env.JWT_SECRET
     );
 
-    // Kullanıcı şifresini hariç tutarak geri gönder
+    console.log(token);
+
     const { password: pass, ...rest } = validUser._doc;
 
     res
       .status(200)
-      .cookie("access_token", token, { httpOnly: true })
+      .cookie("access_token", token, {
+        httpOnly: true,
+      })
       .json(rest);
   } catch (error) {
-    next(error); // Hata durumunda error handler'a yönlendir
+    next(error);
   }
 };
 
