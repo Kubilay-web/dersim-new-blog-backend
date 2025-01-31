@@ -21,7 +21,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "*",
+    origin: "https://dersim-new-blog-backend.vercel.app",
     credentials: true,
   })
 );
