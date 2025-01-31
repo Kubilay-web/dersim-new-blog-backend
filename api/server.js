@@ -21,7 +21,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://dersim-new-blog-backend.vercel.app",
+    origin: "https://dersim-museum.vercel.app", // Update this to the correct origin
     credentials: true,
   })
 );
