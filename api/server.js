@@ -20,9 +20,17 @@ const app = express();
 
 // Middleware
 
+// Set CORS options
+const corsOptions = {
+  origin: "https://dersim-museum.vercel.app", // Belirli bir origin
+  credentials: true, // Kimlik bilgilerini kabul et
+};
+
+// CORS middleware'ini uygula
+app.use(cors(corsOptions));
+
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors());
 
 // MongoDB bağlantısı
 mongoose
