@@ -20,12 +20,14 @@ const app = express();
 
 // Middleware
 
-app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-  })
-);
+// Set CORS options
+const corsOptions = {
+  origin: "*", // the exact origin
+  credentials: true, // allow credentials
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 app.use(cookieParser());
