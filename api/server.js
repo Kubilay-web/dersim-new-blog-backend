@@ -22,11 +22,11 @@ const app = express();
 
 // Set CORS options
 const corsOptions = {
-  origin: "*", // the exact origin
-  credentials: true, // allow credentials
+  origin: "https://dersim-museum.vercel.app", // Belirli bir origin
+  credentials: true, // Kimlik bilgilerini kabul et
 };
 
-// Apply CORS middleware
+// CORS middleware'ini uygula
 app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
