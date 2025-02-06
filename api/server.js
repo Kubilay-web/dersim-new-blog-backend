@@ -52,6 +52,16 @@ app.use("/api/post", postRoutes);
 app.use("/api/home", homePageRoute);
 app.use("/api/contact", contactRoute);
 
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const message = err.message || "Internal Server Error";
+  res.status(statusCode).json({
+    success: false,
+    statusCode,
+    message,
+  });
+});
+
 // Sunucu başlatma
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
