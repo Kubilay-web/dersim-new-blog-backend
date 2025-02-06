@@ -30,6 +30,7 @@ app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(express.json());
 
 // MongoDB bağlantısı
 mongoose
