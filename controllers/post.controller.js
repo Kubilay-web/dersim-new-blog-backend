@@ -89,6 +89,7 @@ export const getposts = async (req, res, next) => {
 };
 
 // Postu güncelleme
+// Postu güncelleme
 export const updatepost = async (req, res, next) => {
   try {
     const { postId } = req.params;
@@ -122,6 +123,7 @@ export const updatepost = async (req, res, next) => {
           content: req.body.content,
           category: req.body.category,
           image: updatedImage,
+          slug: req.body.slug, // Slug manuel olarak burada güncelleniyor
           color: updatedColor, // Renk güncelleniyor
           blogContent: req.body.blogContent,
         },
