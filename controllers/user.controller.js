@@ -1,6 +1,7 @@
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error.js";
 import User from "../models/user.model.js";
+import cloudinary from "../cloudinary.js";
 
 export const test = (req, res) => {
   res.json({ message: "API is working!" });
@@ -93,13 +94,14 @@ export const test = (req, res) => {
 
 export const updateUser = async (req, res, next) => {
   try {
+    // Eğer kullanıcı güncellenmeye çalışıyorsa, kimlik doğrulama kontrolü
     if (req.user.id !== req.params.userId) {
-      return next(errorHandler(403, "You are not allowed to update this user"));
+      return next(errorHandler(403, "You are not allowed to update this user")); // Yetkisiz kullanıcı hatası
     }
 
-    const updates = {};
+    const updates = {}; // Güncellenmesi gereken alanları burada saklayacağız
 
-    // Kullanıcı adı doğrulama
+    // Kullanıcı adı doğrulaması
     if (req.body.username) {
       if (req.body.username.length < 7 || req.body.username.length > 20) {
         return next(
@@ -112,36 +114,33 @@ export const updateUser = async (req, res, next) => {
       if (req.body.username !== req.body.username.toLowerCase()) {
         return next(errorHandler(400, "Username must be lowercase"));
       }
-      if (!req.body.username.match(/^[a-zA-Z0-9]+$/)) {
-        return next(
-          errorHandler(400, "Username can only contain letters and numbers")
-        );
-      }
+
+      // Kullanıcı adı veritabanında kontrol
       const usernameExists = await User.findOne({
         username: req.body.username,
       });
       if (usernameExists && usernameExists._id.toString() !== req.user.id) {
         return next(errorHandler(400, "Username already taken"));
       }
-      updates.username = req.body.username;
+
+      updates.username = req.body.username; // Güncelleme
     }
 
-    // E-posta doğrulama
+    // E-posta doğrulaması
     if (req.body.email) {
       const emailExists = await User.findOne({ email: req.body.email });
       if (emailExists && emailExists._id.toString() !== req.user.id) {
         return next(errorHandler(400, "Email already taken"));
       }
-      updates.email = req.body.email;
+      updates.email = req.body.email; // Güncelleme
     }
 
     // Profil fotoğrafı yükleme
     if (req.file) {
-      // Fotoğrafın Cloudinary'ye yüklenmesi
       const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: "user_profiles",
+        folder: "user_profiles", // Profil resimleri için bulut klasörü
       });
-      updates.profilePicture = result.secure_url; // Cloudinary URL'si
+      updates.profilePicture = result.secure_url; // Profil fotoğrafı URL'si
     }
 
     // Şifre güncelleme
@@ -151,6 +150,8 @@ export const updateUser = async (req, res, next) => {
           errorHandler(400, "Password must be at least 6 characters")
         );
       }
+
+      // Eski şifreyle yeni şifreyi kontrol et
       const validUser = await User.findById(req.params.userId);
       const validPassword = bcryptjs.compareSync(
         req.body.password,
@@ -161,19 +162,22 @@ export const updateUser = async (req, res, next) => {
           errorHandler(400, "New password cannot be the same as the old one")
         );
       }
+
+      // Yeni şifreyi hashle
       updates.password = bcryptjs.hashSync(req.body.password, 10);
     }
 
+    // Kullanıcıyı güncelleme işlemi
     const updatedUser = await User.findByIdAndUpdate(
       req.params.userId,
       { $set: updates },
-      { new: true }
+      { new: true } // Yeni güncellenmiş veriyi döndür
     );
 
-    const { password, ...rest } = updatedUser._doc;
-    res.status(200).json(rest); // Güncellenmiş kullanıcı bilgilerini döndür
+    const { password, ...rest } = updatedUser._doc; // Şifreyi dışarıda bırakıyoruz
+    res.status(200).json(rest); // Güncellenmiş kullanıcı bilgilerini döndürüyoruz
   } catch (error) {
-    next(error); // Hata varsa next ile hata handler'ına yönlendirme
+    next(error); // Hata varsa, hata handler'ına yönlendirme
   }
 };
 
