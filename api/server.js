@@ -24,13 +24,10 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://dersim-museum.vercel.app", // frontend'in çalıştığı domain (port)
+    origin: "http://localhost:3000", // frontend'in çalıştığı domain (port)
     credentials: true, // cookies gönderimi için
   })
 );
-
-// CORS middleware'ini uygula
-// app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 app.use(cookieParser());

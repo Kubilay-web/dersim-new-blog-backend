@@ -246,3 +246,22 @@ export const copyPostsToNewCategory = async (req, res, next) => {
     next(error);
   }
 };
+
+// Slug'a göre postu almak
+
+export const getPostBySlug = async (req, res) => {
+  const { slug } = req.params;
+
+  try {
+    // Blogu slug'a göre bul
+    const post = await Post.findOne({ slug });
+
+    if (!post) {
+      return res.status(404).json({ message: "Post bulunamadı" });
+    }
+
+    res.json(post);
+  } catch (error) {
+    res.status(500).json({ message: "Sunucu hatası", error });
+  }
+};
