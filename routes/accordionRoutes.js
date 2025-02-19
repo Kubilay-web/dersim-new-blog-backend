@@ -18,4 +18,13 @@ router.post(
 // Update page title for a category
 router.put("/accordion-title/:categoryId", accordionController.updatePageTitle);
 
+// Accordion verisini güncellemek için route
+router.put("/accordion/:accordionId", accordionController.updateAccordionData);
+
+// Accordion verisini silmek için route
+router.delete(
+  "/accordion/:accordionId",
+  accordionController.deleteAccordionData
+);
+
 export default router;
