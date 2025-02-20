@@ -1,7 +1,6 @@
 import cloudinary from "../cloudinary.js";
 import Post from "../models/post.model.js";
 import { errorHandler } from "../utils/error.js";
-
 // Slug oluşturma fonksiyonu
 const createSlug = (title) => {
   const baseSlug = title
@@ -263,5 +262,28 @@ export const getPostBySlug = async (req, res) => {
     res.json(post);
   } catch (error) {
     res.status(500).json({ message: "Sunucu hatası", error });
+  }
+};
+
+export const updateCategoryName = async (req, res, next) => {
+  try {
+    const { oldCategory, updatedCategory } = req.body;
+
+    if (!oldCategory || !updatedCategory) {
+      return res.status(400).json({
+        success: false,
+        message: "Eski ve yeni kategori adı gereklidir.",
+      });
+    }
+
+    // MongoDB'de kategori güncellemesi yap
+    await Post.updateMany(
+      { category: oldCategory },
+      { $set: { category: updatedCategory } }
+    );
+
+    res.status(200).json({ success: true, updatedCategory });
+  } catch (error) {
+    next(error);
   }
 };

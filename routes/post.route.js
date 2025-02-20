@@ -8,6 +8,7 @@ import {
   getPostsByCategory,
   copyPostsToNewCategory,
   getPostBySlug,
+  updateCategoryName,
 } from "../controllers/post.controller.js";
 import upload3 from "../upload3.js";
 
@@ -20,5 +21,6 @@ router.get("/:slug", getPostBySlug);
 router.get("/getposts/category", getPostsByCategory);
 router.delete("/deletepost/:postId", deletepost);
 router.put("/updatepost/:postId", upload3.single("image"), updatepost);
+router.post("/update-category-name", updateCategoryName);
 
 export default router;
