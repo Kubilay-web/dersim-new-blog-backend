@@ -195,10 +195,14 @@ export const deleteUser = async (req, res, next) => {
 
 export const signout = (req, res, next) => {
   try {
-    res
-      .clearCookie("access_token")
-      .status(200)
-      .json("User has been signed out");
+    // Çerezi temizle
+    res.clearCookie("access_token", {
+      httpOnly: true, // Çerezin sadece HTTP isteğiyle erişilebilir olmasını sağlar
+      sameSite: "strict", // Aynı site politikası
+    });
+
+    // Yanıt döndür
+    res.status(200).json({ message: "User has been signed out" });
   } catch (error) {
     next(error);
   }
