@@ -287,3 +287,190 @@ export const updateCategoryName = async (req, res, next) => {
     next(error);
   }
 };
+
+//Silinecek aşağıdakiler
+
+// Postları yeni kategoriye ve dile göre kopyalama
+export const copyPostsToNewLanguage = async (req, res, next) => {
+  try {
+    const { oldLanguage, newLanguage } = req.query;
+
+    // Eski ve yeni dil parametrelerinin olup olmadığını kontrol et
+    if (!oldLanguage || !newLanguage) {
+      return res.status(400).json({
+        message: "Eski dil ve yeni dil parametreleri gereklidir",
+      });
+    }
+
+    // Eski dildeki postları al
+    const posts = await Post.find({ language: oldLanguage });
+
+    if (posts.length === 0) {
+      return res
+        .status(404)
+        .json({ message: `Eski dilde (${oldLanguage}) hiç post bulunamadı` });
+    }
+
+    const copiedPosts = [];
+    for (const post of posts) {
+      let baseSlug = post.slug;
+      const uniqueId = Date.now();
+      let newSlug = `${baseSlug}-${uniqueId}`;
+
+      // Slug benzersizliğini kontrol et ve gerekirse değiştir
+      let existingPost = await Post.findOne({ slug: newSlug });
+      while (existingPost) {
+        newSlug = `${baseSlug}-${Date.now()}`;
+        existingPost = await Post.findOne({ slug: newSlug });
+      }
+
+      // Yeni post oluştur ve boş alanları koru
+      const newPost = new Post({
+        ...post.toObject(),
+        language: newLanguage, // Yeni dil ataması yapılır
+        slug: newSlug,
+        title: post.title || "", // Title yoksa boş string olarak bırak
+        content: post.content || "", // Content yoksa boş string olarak bırak
+        description: post.description || "", // Description yoksa boş bırak
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        _id: undefined, // Yeni bir ID atanır
+      });
+
+      const savedPost = await newPost.save();
+      copiedPosts.push(savedPost);
+    }
+
+    res.status(201).json({
+      message: `${oldLanguage} dilindeki postlar başarıyla ${newLanguage} diline kopyalandı.`,
+      copiedPosts,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateSlugsByLanguage = async (req, res, next) => {
+  try {
+    // English postlarını güncelle
+    await Post.updateMany(
+      {
+        language: "english",
+        slug: { $not: new RegExp("^/en/") }, // Sadece /en/ ile başlamayanları günceller
+      },
+      [
+        {
+          $set: {
+            slug: {
+              $cond: {
+                if: { $regexMatch: { input: "$slug", regex: /^\/en\/\// } }, // Eğer /en// ile başlıyorsa
+                then: {
+                  $concat: [
+                    "/en",
+                    { $substr: ["$slug", 4, { $strLenBytes: "$slug" }] },
+                  ],
+                }, // /en/ kısmını düzelt
+                else: { $concat: ["/en", "$slug"] }, // Başında yoksa /en/ ekle
+              },
+            },
+          },
+        },
+      ]
+    );
+
+    // German postlarını güncelle
+    await Post.updateMany(
+      {
+        language: "german",
+        slug: { $not: new RegExp("^/ger/") },
+      },
+      [
+        {
+          $set: {
+            slug: {
+              $cond: {
+                if: { $regexMatch: { input: "$slug", regex: /^\/ger\/\// } }, // Eğer /ger// ile başlıyorsa
+                then: {
+                  $concat: [
+                    "/ger",
+                    { $substr: ["$slug", 4, { $strLenBytes: "$slug" }] },
+                  ],
+                }, // /ger/ kısmını düzelt
+                else: { $concat: ["/ger", "$slug"] }, // Başında yoksa /ger/ ekle
+              },
+            },
+          },
+        },
+      ]
+    );
+
+    // Kurdish postlarını güncelle
+    await Post.updateMany(
+      {
+        language: "kurdish",
+        slug: { $not: new RegExp("^/kur/") },
+      },
+      [
+        {
+          $set: {
+            slug: {
+              $cond: {
+                if: { $regexMatch: { input: "$slug", regex: /^\/kur\/\// } }, // Eğer /kur// ile başlıyorsa
+                then: {
+                  $concat: [
+                    "/kur",
+                    { $substr: ["$slug", 4, { $strLenBytes: "$slug" }] },
+                  ],
+                }, // /kur/ kısmını düzelt
+                else: { $concat: ["/kur", "$slug"] }, // Başında yoksa /kur/ ekle
+              },
+            },
+          },
+        },
+      ]
+    );
+
+    res.status(200).json({
+      message: "Sluglar başarıyla dil kodlarına göre güncellendi.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// CategoryId'ye göre postları almak
+
+export const getPostsByCategoryIdAndLanguage = async (req, res, next) => {
+  try {
+    const { categoryId, language } = req.query;
+
+    if (!categoryId) {
+      return res
+        .status(400)
+        .json({ message: "categoryId parametresi gereklidir" });
+    }
+
+    // Dil parametresi isteğe bağlı, eğer varsa filtrele
+    const filter = {
+      categoryId,
+      ...(language && { language }), // Eğer dil parametresi varsa, filtreye ekle
+    };
+
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 1000;
+
+    const posts = await Post.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(startIndex)
+      .limit(limit);
+
+    const totalPosts = await Post.countDocuments(filter);
+
+    res.status(200).json({
+      posts,
+      totalPosts,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

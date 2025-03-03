@@ -6,7 +6,8 @@ const blogSchema = new mongoose.Schema({
   content: String,
   category: { type: String, required: true },
   image: String,
-  slug: { type: String, unique: true },
+  slug: { type: String },
+  language: { type: String, default: "turkish" }, // Dil alanı ekleniyor, varsayılan olarak 'turkish' olacak
 });
 
 blogSchema.pre("save", function (next) {

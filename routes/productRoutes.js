@@ -5,6 +5,7 @@ import {
   deleteProduct,
   getProductById,
   getAllProducts,
+  getProductsByLanguage,
 } from "../controllers/productController.js";
 import upload2 from "../upload2.js";
 
@@ -23,5 +24,7 @@ router.get("/", getAllProducts);
 
 // GET ürün detaylarını slug'a göre getir
 router.get("/:slug", getProductById);
+
+router.get("/language/:language", getProductsByLanguage);
 
 export default router;

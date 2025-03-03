@@ -24,7 +24,7 @@ const getBlogsByCategory = async (req, res) => {
 
 // Yeni blog oluştur
 const createBlog = async (req, res) => {
-  const { title, content, category } = req.body;
+  const { title, content, category, language, slug } = req.body;
 
   try {
     let uploadedImage = null;
@@ -38,6 +38,8 @@ const createBlog = async (req, res) => {
       title,
       content,
       category,
+      language,
+      slug,
       image: uploadedImage,
     });
 
@@ -51,7 +53,7 @@ const createBlog = async (req, res) => {
 // Blogu güncelle
 const updateBlog = async (req, res) => {
   const { id } = req.params;
-  const { title, content, category } = req.body;
+  const { title, content, category, language, slug } = req.body;
 
   try {
     const blog = await Blog.findById(id);
@@ -77,6 +79,8 @@ const updateBlog = async (req, res) => {
     blog.title = title || blog.title;
     blog.content = content || blog.content;
     blog.category = category || blog.category;
+    blog.language = language || blog.language;
+    blog.slug = slug || blog.slug; // Slug da manuel olarak güncellenebilir
     blog.image = updatedImage;
 
     const updatedBlog = await blog.save();
@@ -87,7 +91,6 @@ const updateBlog = async (req, res) => {
 };
 
 // Blogu sil
-
 const deleteBlog = async (req, res) => {
   const { id } = req.params; // Blog ID'sini al
 

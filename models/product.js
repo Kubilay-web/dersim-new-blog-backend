@@ -8,6 +8,7 @@ const productSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   image: { type: String }, // Resim URL'si
   slug: { type: String, required: true, unique: true }, // URL dostu tanımlayıcı
+  language: { type: String, required: true, default: "turkish" }, // Dil alanı eklendi
 });
 
 // Ürün Modeli

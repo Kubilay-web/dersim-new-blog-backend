@@ -9,6 +9,9 @@ import {
   copyPostsToNewCategory,
   getPostBySlug,
   updateCategoryName,
+  copyPostsToNewLanguage,
+  updateSlugsByLanguage,
+  getPostsByCategoryIdAndLanguage,
 } from "../controllers/post.controller.js";
 import upload3 from "../upload3.js";
 
@@ -22,5 +25,10 @@ router.get("/getposts/category", getPostsByCategory);
 router.delete("/deletepost/:postId", deletepost);
 router.put("/updatepost/:postId", upload3.single("image"), updatepost);
 router.post("/update-category-name", updateCategoryName);
+
+router.get("/getposts/categoryIdAndLanguage", getPostsByCategoryIdAndLanguage);
+
+router.post("/copylanguage", copyPostsToNewLanguage);
+router.put("/update-slugs", updateSlugsByLanguage);
 
 export default router;

@@ -128,10 +128,29 @@ const getAllProducts = async (req, res) => {
   }
 };
 
+const getProductsByLanguage = async (req, res) => {
+  const { language } = req.params; // URL'den language parametresini al
+
+  try {
+    const products = await Product.find({ language }); // Belirtilen dile göre ürünleri filtrele
+
+    if (products.length === 0) {
+      return res.status(404).json({ message: "Bu dilde ürün bulunamadı" });
+    }
+
+    res.json(products);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Ürünler getirilirken hata oluştu", error });
+  }
+};
+
 export {
   createProduct,
   updateProduct,
   deleteProduct,
   getProductById,
   getAllProducts,
+  getProductsByLanguage,
 };
