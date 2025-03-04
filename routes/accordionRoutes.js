@@ -27,4 +27,9 @@ router.delete(
   accordionController.deleteAccordionData
 );
 
+router.get(
+  "/accordion/:categoryId/:language",
+  accordionController.getAccordionDataForCategoryLanguage
+);
+
 export default router;

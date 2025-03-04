@@ -107,8 +107,23 @@ const deleteAccordionData = async (req, res) => {
   }
 };
 
+// Belirli bir categoryId ve language için Accordion verilerini getir
+const getAccordionDataForCategoryLanguage = async (req, res) => {
+  const { categoryId, language } = req.params; // categoryId ve language alınır
+
+  try {
+    const data = await Accordion.find({ categoryId, language }); // Filtreleme
+    res.json(data);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Accordion verileri alınırken hata oluştu" });
+  }
+};
+
 export default {
   getAccordionDataForCategory,
+  getAccordionDataForCategoryLanguage,
   createAccordionDataForCategory,
   updatePageTitle,
   updateAccordionData,

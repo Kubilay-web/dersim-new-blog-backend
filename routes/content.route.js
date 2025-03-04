@@ -6,6 +6,7 @@ import {
   updateContent,
   deleteContent,
   getContentsByTitle,
+  getContentByIdAndLanguage,
 } from "../controllers/content.controller.js";
 
 const router = express.Router();
@@ -27,5 +28,7 @@ router.put("/:id", updateContent);
 
 // İçeriği sil
 router.delete("/:id", deleteContent);
+
+router.get("/:contentId/:language", getContentByIdAndLanguage);
 
 export default router;

@@ -56,3 +56,54 @@
 
 // // Scripti çalıştır
 // assignCategoryId();
+
+import mongoose from "mongoose";
+import Accordion from "../models/accordionModel.js"; // Yeni şemayı kullanıyoruz
+
+const assignAccordionId = async () => {
+  try {
+    // MongoDB'ye bağlan
+    await mongoose.connect(
+      "mongodb+srv://Kubilay:YdhTouCOUkYwEIKQ@cluster0.gk3lmtj.mongodb.net/dersim?retryWrites=true&w=majority&appName=Cluster0",
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }
+    );
+
+    // Desteklenen diller
+    const languages = ["turkish", "german", "english", "kurdish", "zazaki"];
+
+    // Tüm benzersiz başlıkları (`title`) al
+    const titles = await Accordion.distinct("title");
+
+    let index = 1; // Başlıklara özel numaralandırma
+
+    for (const title of titles) {
+      // Her dil için aynı numarayı kullanarak accordionId oluştur
+      for (const language of languages) {
+        const accordionId = `${language}-accordion-${index}`; // Yeni accordionId formatı
+
+        // Aynı başlığa sahip tüm belgeleri güncelle
+        const result = await Accordion.updateMany(
+          { title, language },
+          { $set: { accordionId } } // contentId yerine accordionId kullanıldı
+        );
+
+        console.log(
+          `"${title}" başlıklı (${language}) içerikte ${result.modifiedCount} kayıt için accordionId "${accordionId}" olarak güncellendi.`
+        );
+      }
+      index++; // Bir sonraki başlık için numarayı artır
+    }
+
+    mongoose.disconnect(); // Bağlantıyı kapat
+    console.log("Güncelleme tamamlandı!");
+  } catch (error) {
+    console.error("Hata oluştu:", error);
+    mongoose.disconnect();
+  }
+};
+
+// Scripti çalıştır
+assignAccordionId();
