@@ -19,7 +19,9 @@ const router = express.Router();
 
 router.post("/create", upload3.single("image"), create);
 router.get("/copy", copyPostsToNewCategory);
+
 router.get("/getposts", getposts);
+
 router.get("/:slug", getPostBySlug);
 router.get("/getposts/category", getPostsByCategory);
 router.delete("/deletepost/:postId", deletepost);
